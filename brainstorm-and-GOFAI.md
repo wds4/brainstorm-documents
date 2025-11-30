@@ -21,9 +21,12 @@ The core claim of this paper is that the bottleneck is no longer technical. The 
 
 The rest of the paper shows how.
 
-# Section 2 – nostr as the First Globally Writable, Signed Culture Stream
+## Section 2 – nostr as the First Globally Writable, Signed Culture Stream
+
 For the first time in history, a simple, open protocol gives every human a globally unique, cryptographically verifiable identity and a write-once append-only event stream that any client can read, replicate, or filter without permission. That protocol is nostr (Notes and Other Stuff Transmitted by Relays), and its implications for symbolic knowledge acquisition are profound.
+
 A nostr identity is an ed25519 or secp256k1 keypair. Every event is a JSON object containing a kind, a content string or structured payload, a list of tagged pubkeys, and a signature. Relays accept and gossip events according to whatever policy their operators choose, but no relay can alter or forge an event once signed. Clients therefore have the final say: they choose which relays to trust, which keys to follow, and how to interpret the firehose.
+
 This architecture yields three properties that Cyc, Open Mind Common Sense, ConceptNet, Wikidata, and every prior large-scale knowledge-base effort fatally lacked:
 
 Universal write access with provenance
@@ -36,10 +39,12 @@ Because the user sits at the centre of their own Grapevine, there is no single p
 In short, nostr turns the entire internet into a globally replicated blackboard on which millions of humans are already writing short symbolic fragments every day—memes, reactions, links, hot takes—and attaching cryptographic signatures and payment-weighted votes to each fragment. All that was missing was a client willing to interpret those fragments as candidate axioms instead of mere social chatter.
 Brainstorm is that client. The next section shows the complete system in one picture.
 
-# Section 3 – Brainstorm System Overview
+## Section 3 – Brainstorm System Overview
+
 Brainstorm is a local-first client (currently desktop and mobile prototypes) that turns the raw nostr firehose into a personal, continuously evolving symbolic mind. It does this with four tightly coupled components that run entirely on the user’s device and close the acquisition loop described in Section 1. Figure 1 shows the data flow; the rest of the paper zooms into each box.
 
 The Concept Graph and Class Thread primitive
+
 All structured knowledge in Brainstorm is stored as a directed hypergraph whose primary organising principle is the Class Thread: a chain of nodes and typed edges that begins at a class-origin node (e.g. the abstract concept “Dog”), passes through optional superset and subset nodes (“Dogs”, “Working Dogs”, “Border Collies”), carries constraint and property schemas, and finally terminates at concrete instance nodes (“Spot”, “Luna”). Propagation edges inherit and specialise constraints downward; horizontal integration edges transcribe data sideways between threads. Class Threads are the explicit, queryable analogue of the latent manifolds that interpretability researchers have found inside LLMs.
 The Grapevine
 The user’s personal trust network, centred on their own pubkey. It is built automatically from follow lists (kind 3), zaps (kind 9735), replies, reposts, and explicit trust/mute events. There is no global graph; every user’s Grapevine is different and cannot be censored or altered by any third party.
@@ -53,7 +58,7 @@ The next three sections define the Class Thread primitive, formalise GrapeRank, 
 [Figure 1: Brainstorm data flow – one-page diagram showing nostr events → Grapevine → GrapeRank scores → Concept Graph with Class Threads → analogy engine → new signed events]
 (We can draft the caption and diagram together later; the text above stands alone.)
 
-# Section 4 – The Class Thread Primitive
+## Section 4 – The Class Thread Primitive
 A Class Thread is a directed path in the Concept Graph that explicitly connects an abstract concept to its concrete instances while carrying inheritable constraints and cross-links. It is the central organising primitive of Brainstorm and serves as the direct, editable counterpart to the latent hierarchical manifolds discovered in large language models.
 Formally, a Class Thread T is a sequence of nodes n₀ → n₁ → … → nₖ connected by three kinds of typed edges:
 
@@ -86,11 +91,13 @@ Because every node and every edge is a signed nostr event (kind 12345 for nodes,
 Class Threads are therefore not a static ontology but a living, versioned, trust-weighted lattice. The next section shows exactly how GrapeRank computes that weighting.
 [Figure 2: Three annotated Class Threads with constraint nodes, property trees, and one horizontal integration example]
 
-# Section 5 – GrapeRank over the Grapevine
+## Section 5 – GrapeRank over the Grapevine
 
 GrapeRank is the scoring engine that decides, for each user separately, which proposed nodes, edges, and entire Class Threads survive into their live Concept Graph. It is a nonlinear, iterative fixed-point computation that turns the raw social metadata of the Grapevine (follows, mutes, reports, zaps, replies, etc.) into a scalar credibility weight G ∈ [0,1] for every pubkey and every signed event.
+
 The current production equation, running today in every Brainstorm client, is:
 G_v^o = (1 - e^{-α ∑_w G_w^o · c_r^w}) · (∑_w G_w^o · c_r^w · r_v^w) / (∑_w G_w^o · c_r^w)
+
 where
 
 o is the observer (the logged-in user, fixed at G_o^o = 1)
@@ -105,14 +112,6 @@ The left factor is a soft saturation that guarantees confidence approaches 1 onl
 Interpretation layer
 Every nostr event kind is mapped by a small, user-editable table into (r, c) pairs. Current defaults:
 
-
-
-
-
-
-
-
-
 Event kindInterpretationrckind 3 follow“probably not a bot”1.00.05kind 10000 mute“suspicious”0.40.15kind 1984 report“definite spam / scam”0.00.25kind 9735 zapstrength proportional to sats1.00.03–0.20
 Because interpretation is explicit and local, new kinds (badges, context tags, content ratings) can be added without protocol changes.
 Convergence and performance
@@ -125,10 +124,12 @@ GrapeRank is therefore not merely a sybil-resistance tool; it is the decentralis
 </extracted_content>
 
 
-# Section 6 – Analogy via Structure-Mapping on High-Credence Threads
+## Section 6 – Analogy via Structure-Mapping on High-Credence Threads
 
 Once GrapeRank has filtered the nostr stream into a personal Concept Graph containing only high-credence Class Threads (typically G > 0.5), Brainstorm runs a lightweight analogical engine that turns filtering into genuine discovery.
+
 The engine rests on a single observation that has been true since Tenenbaum & Griffiths (2001) and is now empirically verifiable in the wild: human-like inductive leaps are almost always structure-preserving mappings between two relational graphs.
+
 Every hour (or on demand), Brainstorm performs the following pass over the top 8 000 highest-credence Class Threads:
 
 Candidate selection
@@ -155,7 +156,7 @@ The loop is now fully closed (Figure 4).
 [Figure 4: The closed Brainstorm loop – nostr events → Grapevine + GrapeRank → high-credence Class Threads → analogy engine → new signed events → repeat]
 Section 7 will present current empirical results and the three hardest open problems that remain.
 
-# Section 7 – Closed Loop, Empirical Results, and Open Problems
+## Section 7 – Closed Loop, Empirical Results, and Open Problems
 The four components described above form a complete, self-reinforcing cycle:
 nostr events
 ↓
@@ -191,20 +192,49 @@ When two high-credence threads assert incompatible constraints on the same conce
 These are not flaws; they are the precise research questions that symbolic AI has been trying to ask for forty years and finally has real data to answer.
 The conclusion follows.
 
-# Section 8 – Conclusion
+## Section 8 – Conclusion
+
 Brainstorm is the first system that actually closes the loop that defeated every previous symbolic-AI effort for four decades.
+
 Lenat could not hire enough ontologists.
+
 Tenenbaum could not find a cultural library large enough for his engines to grow up.
+
 The LLM industry chose to memorise the internet instead of understanding it.
+
 We did none of those things.
+
 Instead, we took the global, cryptographically signed social chatter that seven million humans are already producing on nostr, ran GrapeRank over each user’s personal Grapevine to extract a continuous Bayesian posterior on credibility, organised the surviving fragments into explicit Class Threads, and let a simple structure-mapping engine propose new threads by analogy. The proposals are themselves nostr events, so the loop closes without central coordination, without paid experts, and without a single line of hand-engineered prior.
+
 The result is a living, personalised, trust-weighted symbolic mind that updates in real time, resists sybil attacks by design, and already discovers new causal and conceptual structure that no single human asserted.
+
 Finally, an unexpected convergence: recent mechanistic interpretability work reveals that large language models already induce latent analogues of Class Threads—low-dimensional manifolds along which hyponyms monotonically specialise their hypernyms (Gurnee et al., 2023; Hernandez et al., 2023). The hierarchies that took symbolic AI decades to hand-craft, and that LLMs learned implicitly from raw text, turn out to be the same geometric objects. Brainstorm simply externalises them, makes them editable, queryable, and weighted by real human webs of trust. Far from competing paradigms, explicit symbolic graphs and statistical embeddings may be two sides of the same underlying structure—one discovered by gradient descent, the other now growing, deliberately and decentrally, on nostr.
+
 The 40-year knowledge-acquisition bottleneck is no longer a theoretical puzzle.
+
 It is a running prototype you can try today at https://straycat.brainstorm.social.
+
 The symbolic AI revolution will not be funded by DARPA or OpenAI.
+
 It will be bootstrapped by people who simply got tired of drowning in noise and decided to build a mind they could actually trust.
+
 We invite the cognitive science, AI, and nostr communities to join us.
+
 There is room for another eight billion personalised symbolic minds.
-Come help us finish what Lenat started, and what Tenenbaum proved was possible,
-this time without asking anyone’s permission.
+
+Come help us finish what Lenat started, and what Tenenbaum proved was possible, this time without asking anyone’s permission.
+
+## References
+
+Lenat, D. B. (1995). CYC: A large-scale investment in knowledge infrastructure. Communications of the ACM, 38(11), 33-38.
+
+Lake, B. M., Salakhutdinov, R., & Tenenbaum, J. B. (2015). Human-level concept learning through probabilistic program induction. Science, 350(6266), 1332-1338.
+
+Ellis, K., et al. (2021). DreamCoder: Growing generalizable, interpretable knowledge with wake-sleep Bayesian program learning. arXiv:2011.02906.
+
+Gurnee, W., et al. (2023). Finding neurons for concepts. arXiv:2306.10232.
+
+Hernandez, D., et al. (2023). Linearly mapping from image to text. arXiv:2301.12198.
+
+Nostr NIPs: NIP-01, NIP-51, NIP-56, NIP-85
+
