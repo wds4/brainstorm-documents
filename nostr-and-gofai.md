@@ -27,3 +27,7 @@ We claim that the knowledge acquisition bottleneck was never at its heart a tech
 
 The nostr protocol provides exactly that substrate. And knowledge acquistion? Web of trust. 
 
+## Draft summary of lesson learned, bring thought process around to social interaction, language
+
+Cyc was indeed a viable company for 40 years, with products like (health care expert systems). But its greatest contribution may be that of a cautionary tale. What is the lesson learned? It failed to take into account social interatcions. The symbols we use to represent stuff, the ontologies and the like, are an emergent process, the result of social interactions. Ontologies (most, at least) would not exist without our need to communicate with each other. Ontologies must change and evolve as learning takes place and understanding expands. Without a model for how ontologies change and evolve over time, a model that must of necessity take into account social intraction, GOFAI will fail. What is the correct word for a hat? It depends on the society in which we are embedded. Attempts to make a single repository of all human knowledge is doomed to fail without taking this into account. 
+
